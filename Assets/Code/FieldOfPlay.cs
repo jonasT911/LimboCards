@@ -89,6 +89,7 @@ public class FieldOfPlay : MonoBehaviour
     {
         doCombat(ref enemyCards, ref playerCards, ref playerHealth, ref enemyHealth);
         playerCanAct = true;
+        updateText();
     }
 
     public void doCombat(ref GameObject[] attackers, ref GameObject[] defenders, ref int defendingHero, ref int attackingHero)

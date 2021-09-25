@@ -44,10 +44,12 @@ public class baseEnemy : MonoBehaviour
                 playedCard.GetComponent<Card>().setTired(true);
                 enemyHand.Remove(card);
                 board.playEnemyCards(playedCard, i);
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(.5f);
             }
             i++;
         }
+        takingTurn = false;
+        board.enemyDone();
         print("After play size " + enemyHand.Count);
     }
 
@@ -58,8 +60,6 @@ public class baseEnemy : MonoBehaviour
         {
             takingTurn = true;
             StartCoroutine(enemyTurn());
-            board.enemyDone();
-            takingTurn = false;
 
         }
     }
