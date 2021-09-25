@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class FieldOfPlay : MonoBehaviour
 {
-
+    //Test comment
     private int playerHealth = 10;
     private int enemyHealth = 10;
     private int money = 10;
