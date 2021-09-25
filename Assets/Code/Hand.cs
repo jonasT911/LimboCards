@@ -10,6 +10,8 @@ public class Hand : MonoBehaviour
     ArrayList hand = new ArrayList();
 
     private int maxHand=8;
+
+    public bool full = false;
  
     // Start is called before the first frame update
     void Start()
@@ -18,9 +20,14 @@ public class Hand : MonoBehaviour
     }
     public void addCard(GameObject newCard)
     {
-        if (hand.Count < 8)
+        if (!full)
         {
             hand.Add(newCard);
+        }
+
+        if (hand.Count > 7)
+        {
+            full = true;
         }
         organize();
         
@@ -28,8 +35,12 @@ public class Hand : MonoBehaviour
     public void removeCard(GameObject newCard)
     {
         hand.Remove(newCard);
-       // hand[numCards] = null;
+        if (hand.Count <8)
+        {
+            full = false;
+        }
         
+
     }
 
 
