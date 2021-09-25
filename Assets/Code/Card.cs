@@ -18,19 +18,73 @@ public class Card : MonoBehaviour
     public Text healthDisplay;
     public Text costDisplay;
 
-    bool clickable = true;
+    public bool clickable = true;
     bool followMouse = false;
+    bool tired = false;
+
+    public bool debugPlayer = false;
+
+    public GameObject sleepingEffect;
 
     // Start is called before the first frame update
     void Start()
     {
+        print("card working");
         board = FindObjectOfType<FieldOfPlay>();
+      
+        currentHealth = maxHealth;
+        updateValues();
+
+        if (debugPlayer)
+        {
+            startPlayerCard();
+        }
+    }
+
+    public void startPlayerCard()
+    {
         hand = FindObjectOfType<Hand>();
         hand.addCard(gameObject);
-        currentHealth = maxHealth;
+    }
+
+    public void setHealth(int newHealth)
+    {
+
+        currentHealth = newHealth;
+        if (currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
         updateValues();
     }
 
+    public int getHealth()
+    {
+        return currentHealth;
+    }
+
+    public void setTired(bool state)
+    {
+        tired = state;
+        if (tired)
+        {
+            makeZ();
+        }
+    }
+    
+    private void makeZ()
+    {
+       
+        if (tired)
+        {
+            Instantiate(sleepingEffect, new Vector3(transform.position.x, transform.position.y), Quaternion.identity);
+            Invoke("makeZ", 1.3f);
+        }
+    }
+     public bool getTired()
+    {
+        return tired;
+    }
     public void attackRoutine()
     {
         print("Parent Card");

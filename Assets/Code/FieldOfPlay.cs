@@ -12,13 +12,9 @@ public class FieldOfPlay : MonoBehaviour
     private int money = 10;
     private int maxMoney = 10;
 
-    public int xSpaceSize=1;
-    public int ySpaceSize=1;
-    public GameObject farLeft;
-    public GameObject midRight;
-    public GameObject middle;
-    public GameObject midLeft;
-    public GameObject farRight;
+    public int xSpaceSize = 1;
+    public int ySpaceSize = 1;
+    public GameObject[] spaces = new GameObject[5];
 
 
     public Text playerDisplay;
@@ -27,6 +23,9 @@ public class FieldOfPlay : MonoBehaviour
 
     GameObject[] playerCards = new GameObject[5];
     GameObject[] enemyCards = new GameObject[5];
+
+    bool enemyTurn = false;
+    bool playerCanAct = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,7 +33,24 @@ public class FieldOfPlay : MonoBehaviour
 
     }
 
-     void updateText()
+    public GameObject[] getPlayerSide()
+    {
+        return playerCards;
+    }
+    public GameObject[] getEnemySide()
+    {
+        return enemyCards;
+    }
+
+    public void playEnemyCards(GameObject card, int location)
+    {
+        card.transform.position = new Vector3(spaces[location].transform.position.x + xSpaceSize - 1f, spaces[location].transform.position.y, transform.position.z);
+        enemyCards[location] = card;
+        updateText();
+        
+    }
+
+    void updateText()
     {
         playerDisplay.text = "" + playerHealth;
         enemyDisplay.text = "" + enemyHealth;
@@ -42,41 +58,103 @@ public class FieldOfPlay : MonoBehaviour
 
     }
 
-   public void endTurn()
+    public void endTurn()
     {
         print("end turn");
+        doCombat(ref playerCards, ref enemyCards, ref enemyHealth, ref playerHealth);
         money = maxMoney;
+
         updateText();
+
+        playerCanAct = false;
+        Invoke("startEnemyTurn", .3f);
+    }
+
+    private void startEnemyTurn()
+    {
+        enemyTurn = true;
+    }
+
+    public bool isEnemyTurn()
+    {
+        return enemyTurn;
+    }
+    public void enemyDone(){
+        enemyTurn = false;
+        Invoke("enemyCombat", .5f);
+   
+    }
+
+    void enemyCombat()
+    {
+        doCombat(ref enemyCards, ref playerCards, ref playerHealth, ref enemyHealth);
+        playerCanAct = true;
+    }
+
+    public void doCombat(ref GameObject[] attackers, ref GameObject[] defenders, ref int defendingHero, ref int attackingHero)
+    {
+        for(int i = 0; i < 5; i++)
+        {
+            if (attackers[i] != null)
+            {
+                if (!attackers[i].GetComponent<Card>().getTired())
+                {
+                    if (defenders[i] != null)
+                    {
+                        print("Enemy in the way");
+                        int healthTmp = defenders[i].GetComponent<Card>().getHealth();
+                        healthTmp -= attackers[i].GetComponent<Card>().attack;
+                        defenders[i].GetComponent<Card>().setHealth(healthTmp);
+                        if (healthTmp <= 0)
+                        {
+                            Destroy(defenders[i]);
+                            defenders[i] = null;
+                        }
+                    }
+                    else
+                    {
+                        defendingHero -= attackers[i].GetComponent<Card>().attack;
+                    }
+                }
+                else
+                {
+                    attackers[i].GetComponent<Card>().setTired(false);
+                }
+            }
+        }
     }
 
     public bool playedOnBoard(GameObject cardHeld)
     {
  
-        
-        if(onSpace(cardHeld.transform.position,farLeft.transform.position))
+        if(!playerCanAct)
         {
-           return setOnPostion(cardHeld, farLeft, 0);
+            return false;
+        }
+        if(onSpace(cardHeld.transform.position,spaces[0].transform.position))
+        {
+           return setOnPostion(cardHeld, 0);
             
         }else
-        if (onSpace(cardHeld.transform.position, midLeft.transform.position))
+        if (onSpace(cardHeld.transform.position, spaces[1].transform.position))
         {
-            return setOnPostion(cardHeld, midLeft, 1);
+            return setOnPostion(cardHeld,  1);
         }
         else
-        if (onSpace(cardHeld.transform.position, middle.transform.position))
+        if (onSpace(cardHeld.transform.position, spaces[2].transform.position))
         {
-            return setOnPostion(cardHeld, middle, 2);
+            return setOnPostion(cardHeld,  2);
         }
         else
-        if (onSpace(cardHeld.transform.position, midRight.transform.position))
+        if (onSpace(cardHeld.transform.position, spaces[3].transform.position))
         {
-            return setOnPostion(cardHeld, midRight, 3);
+            return setOnPostion(cardHeld,  3);
 
         }
         else
-        if (onSpace(cardHeld.transform.position, farRight.transform.position))
+        if (onSpace(cardHeld.transform.position, spaces[4].transform.position))
         {
-            return setOnPostion(cardHeld, farRight, 4);
+            return setOnPostion(cardHeld,  4);
         }
         else
         {
@@ -97,14 +175,15 @@ public class FieldOfPlay : MonoBehaviour
         return false;
     }
 
-    bool setOnPostion(GameObject cardHeld,GameObject space,int location)
+    bool setOnPostion(GameObject cardHeld,int location)
     {
         if (playerCards[location] == null&&cardHeld.GetComponent<Card>().cost<=money)
         {
             money -= cardHeld.GetComponent<Card>().cost;
-            cardHeld.transform.position = new Vector3(space.transform.position.x - xSpaceSize + 1f, space.transform.position.y, transform.position.z);
+            cardHeld.transform.position = new Vector3(spaces[location].transform.position.x - xSpaceSize + 1f, spaces[location].transform.position.y, transform.position.z);
             playerCards[location] = cardHeld;
             updateText();
+            cardHeld.GetComponent<Card>().setTired(true);
             return true;
         }
         else

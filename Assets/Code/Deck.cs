@@ -22,7 +22,8 @@ public class Deck : MonoBehaviour
             if (Camera.main.ScreenToWorldPoint(Input.mousePosition).x < transform.position.x + .5 && Camera.main.ScreenToWorldPoint(Input.mousePosition).x > transform.position.x - .5 &&
                 Camera.main.ScreenToWorldPoint(Input.mousePosition).y < transform.position.y + 1 && Camera.main.ScreenToWorldPoint(Input.mousePosition).y > transform.position.y - 1)
             {
-                Instantiate(card, new Vector3(transform.position.x, transform.position.y), Quaternion.identity);
+                GameObject newCard = Instantiate(card, new Vector3(transform.position.x, transform.position.y), Quaternion.identity);
+                newCard.GetComponent<Card>().startPlayerCard();
             }
         }
     }

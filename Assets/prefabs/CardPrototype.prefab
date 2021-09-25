@@ -284,12 +284,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7575f719ab64a84b9ad75d8811cc495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 1
+  maxHealth: 2
   attack: 1
   cost: 1
   attackDisplay: {fileID: 804479267}
   healthDisplay: {fileID: 5427426348967489192}
   costDisplay: {fileID: 9147105238304137098}
+  clickable: 1
+  debugPlayer: 0
+  sleepingEffect: {fileID: 1548559321789264694, guid: b79bd2235ea25c248864b33e74943875,
+    type: 3}
 --- !u!222 &4650495741173548644
 CanvasRenderer:
   m_ObjectHideFlags: 0
