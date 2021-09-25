@@ -16,6 +16,8 @@ public class FieldOfPlay : MonoBehaviour
     public int ySpaceSize = 1;
     public GameObject[] spaces = new GameObject[5];
 
+    public Deck playerDeck;
+
 
     public Text playerDisplay;
     public Text enemyDisplay;
@@ -29,7 +31,9 @@ public class FieldOfPlay : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        playerDeck = FindObjectOfType<Deck>();
         updateText();
+        playerDeck.battleStart();
 
     }
 
@@ -67,7 +71,7 @@ public class FieldOfPlay : MonoBehaviour
         updateText();
 
         playerCanAct = false;
-        Invoke("startEnemyTurn", .3f);
+        Invoke("startEnemyTurn", 1f);
     }
 
     private void startEnemyTurn()
@@ -88,6 +92,7 @@ public class FieldOfPlay : MonoBehaviour
     void enemyCombat()
     {
         doCombat(ref enemyCards, ref playerCards, ref playerHealth, ref enemyHealth);
+        playerDeck.drawCard();
         playerCanAct = true;
         updateText();
     }

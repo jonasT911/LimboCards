@@ -5,14 +5,14 @@ using UnityEngine;
 public class baseEnemy : MonoBehaviour
 {
 
-    private FieldOfPlay board;
+    protected private FieldOfPlay board;
     public GameObject card;
-    ArrayList enemyHand = new ArrayList();
-    GameObject[] playerCards = new GameObject[5];
-    GameObject[] enemyCards = new GameObject[5];
-    bool takingTurn = false;
+    protected ArrayList enemyHand = new ArrayList();
+    protected GameObject[] playerCards = new GameObject[5];
+    protected GameObject[] enemyCards = new GameObject[5];
+    protected bool takingTurn = false;
     // Start is called before the first frame update
-    void Start()
+    protected void Start()
     {
 
         print("Enemy is here");
@@ -22,7 +22,7 @@ public class baseEnemy : MonoBehaviour
         enemyHand.Add(card);
     }
 
-    void getBoardState()
+    protected void getBoardState()
     {
         playerCards = board.getPlayerSide();
         enemyCards = board.getEnemySide();
@@ -54,7 +54,7 @@ public class baseEnemy : MonoBehaviour
     }
 
 
-    void FixedUpdate()
+    protected void FixedUpdate()
     {
         if (board.isEnemyTurn()&&!takingTurn)
         {

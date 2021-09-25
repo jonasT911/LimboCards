@@ -68,7 +68,7 @@ public class Card : MonoBehaviour
         tired = state;
         if (tired)
         {
-            makeZ();
+            Invoke("makeZ", .6f);
         }
     }
     
