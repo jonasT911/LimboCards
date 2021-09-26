@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class FieldOfPlay : MonoBehaviour
@@ -9,15 +10,16 @@ public class FieldOfPlay : MonoBehaviour
     //Test comment
     private int playerHealth = 10;
     private int enemyHealth = 10;
-    private int money = 10;
-    private int maxMoney = 10;
+    private int money = 7;
+    private int maxMoney = 7;
 
     public int xSpaceSize = 1;
     public int ySpaceSize = 1;
     public GameObject[] spaces = new GameObject[5];
 
-    public Deck playerDeck;
+    private Deck playerDeck;
 
+    public Deck errorDeck;
 
     public Text playerDisplay;
     public Text enemyDisplay;
@@ -31,7 +33,20 @@ public class FieldOfPlay : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
         playerDeck = FindObjectOfType<Deck>();
+        if (playerDeck == null)
+        {
+            print("error deck");
+           playerDeck=Instantiate(errorDeck, new Vector3(-7.4f, -4.2f,0), Quaternion.identity);
+           
+        }
+        Invoke("beginGame", .2f);
+
+    }
+
+    private void beginGame()
+    {
         updateText();
         playerDeck.battleStart();
 
@@ -59,7 +74,27 @@ public class FieldOfPlay : MonoBehaviour
         playerDisplay.text = "" + playerHealth;
         enemyDisplay.text = "" + enemyHealth;
         moneyDisplay.text = "" + money;
+        if (playerHealth <= 0)
+        {
+            StartCoroutine(playerDeath());
+        }
+        if (enemyHealth <= 0)
+        {
+            StartCoroutine(enemyDeath());
+        }
+      
 
+    }
+
+    IEnumerator playerDeath()
+    {
+        yield return new WaitForSeconds(.5f);
+        SceneManager.LoadScene("GameOver");
+    }
+    IEnumerator enemyDeath()
+    {
+        yield return new WaitForSeconds(.5f);
+        SceneManager.LoadScene("Overworld");
     }
 
     public void endTurn()

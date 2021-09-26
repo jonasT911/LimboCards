@@ -8,10 +8,10 @@ public class Deck : MonoBehaviour
 
     private Hand playerHand;
     private FieldOfPlay board;
-    public GameObject card;
-    public GameObject card2;
-    public GameObject card3;
+    public GameObject[] startingCards = new GameObject[6];
+
     public Text cardsLeft;
+    public Text graveYardCount;
     ArrayList collectedCards = new ArrayList();
     ArrayList undrawnCards = new ArrayList();
     ArrayList graveyard = new ArrayList();
@@ -19,13 +19,17 @@ public class Deck : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        collectedCards.Add(card);
-      
-      
-        collectedCards.Add(card2);
-        
-        collectedCards.Add(card3);
-        battleStart();
+        print("added Cards");
+      for(int i = 0; i <startingCards.Length; i++)
+        {
+            collectedCards.Add(startingCards[i]);
+        }
+        showTotalCards();
+    }
+
+    void Awake()
+    {
+        DontDestroyOnLoad(this.gameObject);
     }
 
     public void drawCard()
@@ -42,6 +46,7 @@ public class Deck : MonoBehaviour
             GameObject drawnCardType = (GameObject)undrawnCards[cardInd];
           
             GameObject newCard = Instantiate(drawnCardType, new Vector3(transform.position.x, transform.position.y), Quaternion.identity);
+            newCard.GetComponent<Card>().destroyOnPull = false;
             undrawnCards.Remove(drawnCardType);
             newCard.GetComponent<Card>().startPlayerCard();
 
@@ -58,7 +63,11 @@ public class Deck : MonoBehaviour
         }
 
     }
-
+    public void showTotalCards()
+    {
+        cardsLeft.text = "" + collectedCards.Count;
+        graveYardCount.text = "0" ;
+    }
     public void addToGraveyard(GameObject card)
     {
      graveyard.Add(card);
@@ -67,15 +76,20 @@ public class Deck : MonoBehaviour
     private void updateCount()
     {
         cardsLeft.text = "" + undrawnCards.Count;
+        graveYardCount.text = "" + graveyard.Count;
     }
 
     public void battleStart()
     {
+        
         print("Start the battle");
         undrawnCards = new ArrayList(collectedCards);
         board = FindObjectOfType<FieldOfPlay>();
         playerHand = FindObjectOfType<Hand>();
-      
+        for (int i = 0; i < 4; i++)
+        {
+            drawCard();
+        }
     }
 
     public void shuffle()
