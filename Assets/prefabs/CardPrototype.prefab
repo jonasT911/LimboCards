@@ -284,6 +284,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7575f719ab64a84b9ad75d8811cc495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  thisPrefab: {fileID: 4655321706273098274}
   maxHealth: 2
   attack: 1
   cost: 1

@@ -113,7 +113,17 @@ public class FieldOfPlay : MonoBehaviour
                         defenders[i].GetComponent<Card>().setHealth(healthTmp);
                         if (healthTmp <= 0)
                         {
-                            Destroy(defenders[i]);
+                            if (defenders == playerCards)
+                            {
+                                defenders[i].transform.position = new Vector3(100, 100, 0);
+                                defenders[i].GetComponent<Card>().destroyOnPull = true;
+
+                                playerDeck.addToGraveyard(defenders[i]);
+                            }
+                            else
+                            {
+                                Destroy(defenders[i]);
+                            }
                             defenders[i] = null;
                         }
                     }

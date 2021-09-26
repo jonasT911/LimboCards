@@ -7,6 +7,7 @@ public class Deck : MonoBehaviour
 {
 
     private Hand playerHand;
+    private FieldOfPlay board;
     public GameObject card;
     public GameObject card2;
     public GameObject card3;
@@ -14,6 +15,7 @@ public class Deck : MonoBehaviour
     ArrayList collectedCards = new ArrayList();
     ArrayList undrawnCards = new ArrayList();
     ArrayList graveyard = new ArrayList();
+    GameObject[] playerCards = new GameObject[5];
     // Start is called before the first frame update
     void Start()
     {
@@ -38,11 +40,15 @@ public class Deck : MonoBehaviour
             int cardInd = Random.Range(0, undrawnCards.Count);
             print(cardInd+" = random");
             GameObject drawnCardType = (GameObject)undrawnCards[cardInd];
-
+          
             GameObject newCard = Instantiate(drawnCardType, new Vector3(transform.position.x, transform.position.y), Quaternion.identity);
             undrawnCards.Remove(drawnCardType);
-            graveyard.Add(drawnCardType);//This might be changed later probably not during the jam
             newCard.GetComponent<Card>().startPlayerCard();
+
+            if (drawnCardType.GetComponent<Card>().destroyOnPull)
+            {
+                Destroy(drawnCardType);
+            }
 
             updateCount();
         }
@@ -51,6 +57,11 @@ public class Deck : MonoBehaviour
             print("full");
         }
 
+    }
+
+    public void addToGraveyard(GameObject card)
+    {
+     graveyard.Add(card);
     }
 
     private void updateCount()
@@ -62,7 +73,7 @@ public class Deck : MonoBehaviour
     {
         print("Start the battle");
         undrawnCards = new ArrayList(collectedCards);
-
+        board = FindObjectOfType<FieldOfPlay>();
         playerHand = FindObjectOfType<Hand>();
       
     }

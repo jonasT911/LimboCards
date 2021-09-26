@@ -5,9 +5,10 @@ using UnityEngine.UI;
 
 public class Card : MonoBehaviour
 {
-
+    public GameObject thisPrefab;
     private FieldOfPlay board;
     private Hand hand;
+    private Deck deck;
 
     public int maxHealth = 1;
     private int currentHealth = 1;
@@ -18,17 +19,21 @@ public class Card : MonoBehaviour
     public Text healthDisplay;
     public Text costDisplay;
 
+    public bool destroyOnPull=false;
     public bool clickable = true;
     bool followMouse = false;
     bool tired = false;
 
     public bool debugPlayer = false;
+    bool isPlayerCard = false;
 
     public GameObject sleepingEffect;
 
     // Start is called before the first frame update
     void Start()
     {
+
+        deck = FindObjectOfType<Deck>();
         print("card working");
         board = FindObjectOfType<FieldOfPlay>();
       
@@ -43,8 +48,11 @@ public class Card : MonoBehaviour
 
     public void startPlayerCard()
     {
+        isPlayerCard = true;
+        clickable = true;
         hand = FindObjectOfType<Hand>();
         hand.addCard(gameObject);
+        currentHealth = maxHealth;
     }
 
     public void setHealth(int newHealth)
@@ -145,4 +153,6 @@ public class Card : MonoBehaviour
 
         }
     }
+
+
 }
