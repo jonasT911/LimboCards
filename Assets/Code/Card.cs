@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class Card : MonoBehaviour
 {
+    public string abilityText;
+    public GameObject ability;
+    public GameObject display;
     public GameObject thisPrefab;
     private FieldOfPlay board;
     private Hand hand;
@@ -54,10 +57,25 @@ public class Card : MonoBehaviour
         hand.addCard(gameObject);
         currentHealth = maxHealth;
     }
+    private void shake()
+    {
+        Invoke("shake", .05f);
+        int rotateAmt = Random.Range(-7,7);
+        transform.Rotate(new Vector3(0, 0, rotateAmt));
+    }
+    public void stopShake()
+    {
+        CancelInvoke("shake");
+        transform.eulerAngles = new Vector3(0, 0, 0);
 
+    }
     public void setHealth(int newHealth)
     {
-
+        if (currentHealth > newHealth)
+        {
+            Invoke("stopShake", .5f);
+            shake();
+        }
         currentHealth = newHealth;
         if (currentHealth > maxHealth)
         {
@@ -119,33 +137,45 @@ public class Card : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-          
+
 
             if (Camera.main.ScreenToWorldPoint(Input.mousePosition).x < transform.position.x + .5 && Camera.main.ScreenToWorldPoint(Input.mousePosition).x > transform.position.x - .5 &&
                 Camera.main.ScreenToWorldPoint(Input.mousePosition).y < transform.position.y + 1 && Camera.main.ScreenToWorldPoint(Input.mousePosition).y > transform.position.y - 1)
             {
+                if (!followMouse)
+                {
+                    GameObject displayCard = Instantiate(display, new Vector3(-7.14f, 0), Quaternion.identity);
+                    displayCard.GetComponent<cardDisplay>().passValues(attack, maxHealth, cost, abilityText);
+                    displayCard.GetComponent<SpriteRenderer>().sprite = GetComponent<SpriteRenderer>().sprite;
+
+                }
+
                 if (clickable)
                 {
                     followMouse = !followMouse;
                 }
-                if (!followMouse && clickable)
+                if (!followMouse)
                 {
-                    print("Click Detected");
-
-                    if (board.playedOnBoard(gameObject))
+                    if (clickable)
                     {
-                        print("It worked");
-                        clickable = false;
-                        hand.removeCard(gameObject);
-                        //attackRoutine();
-                       
+                        if (board.playedOnBoard(gameObject))
+                        {
+                            print("It worked");
+                            clickable = false;
+                            hand.removeCard(gameObject);
+                            //attackRoutine();
+
+                        }
+
+                        hand.organize();
                     }
 
-                    hand.organize();
                 }
-            }
+               
+                   
 
-     
+            }
+         
         }
         if (followMouse)
         {

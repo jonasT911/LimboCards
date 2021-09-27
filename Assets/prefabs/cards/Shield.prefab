@@ -260,9 +260,9 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: aba47c15f3da2dc4ea9678948f5f6148, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_SortingOrder: 55
+  m_Sprite: {fileID: 21300000, guid: e57b8760c8437d6498c1ebcde772b29a, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -284,6 +284,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7575f719ab64a84b9ad75d8811cc495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ability: {fileID: 0}
+  display: {fileID: 4655321706273098274, guid: 84b7b79e6ed56df4d94c59a4329d9440, type: 3}
   thisPrefab: {fileID: 4655321706273098274}
   maxHealth: 5
   attack: 1
@@ -455,7 +457,7 @@ MonoBehaviour:
     m_BestFit: 1
     m_MinSize: 0
     m_MaxSize: 40
-    m_Alignment: 0
+    m_Alignment: 2
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0

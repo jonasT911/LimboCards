@@ -17,7 +17,7 @@ public class EndTurn : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            if (Camera.main.ScreenToWorldPoint(Input.mousePosition).x < transform.position.x + .5 && Camera.main.ScreenToWorldPoint(Input.mousePosition).x > transform.position.x - .5 &&
+            if (Camera.main.ScreenToWorldPoint(Input.mousePosition).x < transform.position.x + 2 && Camera.main.ScreenToWorldPoint(Input.mousePosition).x > transform.position.x - 2 &&
                   Camera.main.ScreenToWorldPoint(Input.mousePosition).y < transform.position.y + 1 && Camera.main.ScreenToWorldPoint(Input.mousePosition).y > transform.position.y - 1)
             {
                 if (clickable)

@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class Deck : MonoBehaviour
 {
-
+    int battlesFought = 0;
+    public int badThings = 0;
     private Hand playerHand;
     private FieldOfPlay board;
     public GameObject[] startingCards = new GameObject[6];
@@ -32,9 +33,16 @@ public class Deck : MonoBehaviour
         DontDestroyOnLoad(this.gameObject);
     }
 
+    public void collectCard(GameObject newcard)
+    {
+        print("added one card");
+        collectedCards.Add(newcard);
+    }
+
     public void drawCard()
     {
-        if (!playerHand.full&&!(graveyard.Count==0&&undrawnCards.Count==0))
+
+        if (!playerHand.full&&!(graveyard.Count==0&&undrawnCards.Count==0)&&!board.gameEnded)
         {
             print(undrawnCards.Count);
             if (undrawnCards.Count == 0)
@@ -44,17 +52,35 @@ public class Deck : MonoBehaviour
             int cardInd = Random.Range(0, undrawnCards.Count);
             print(cardInd+" = random");
             GameObject drawnCardType = (GameObject)undrawnCards[cardInd];
-          
-            GameObject newCard = Instantiate(drawnCardType, new Vector3(transform.position.x, transform.position.y), Quaternion.identity);
-            newCard.GetComponent<Card>().destroyOnPull = false;
-            undrawnCards.Remove(drawnCardType);
-            newCard.GetComponent<Card>().startPlayerCard();
 
-            if (drawnCardType.GetComponent<Card>().destroyOnPull)
+            while (drawnCardType == null&&!(graveyard.Count == 0 && undrawnCards.Count == 0))
             {
-                Destroy(drawnCardType);
+                print("ERROR missing card");
+                undrawnCards.Remove(drawnCardType);
+                if (undrawnCards.Count == 0)
+                {
+                    shuffle();
+                }
+                if (!(graveyard.Count == 0 && undrawnCards.Count == 0))
+                {
+                    
+                    cardInd = Random.Range(0, undrawnCards.Count);
+                    print(cardInd + " = random");
+                    drawnCardType = (GameObject)undrawnCards[cardInd];
+                }
             }
+            if (drawnCardType != null)
+            {
+                GameObject newCard = Instantiate(drawnCardType, new Vector3(transform.position.x, transform.position.y), Quaternion.identity);
+                newCard.GetComponent<Card>().destroyOnPull = false;
+                undrawnCards.Remove(drawnCardType);
+                newCard.GetComponent<Card>().startPlayerCard();
 
+                if (drawnCardType.GetComponent<Card>().destroyOnPull)
+                {
+                    Destroy(drawnCardType);
+                }
+            }
             updateCount();
         }
         else
@@ -71,6 +97,15 @@ public class Deck : MonoBehaviour
     public void addToGraveyard(GameObject card)
     {
      graveyard.Add(card);
+    }
+
+    public int getBattles()
+    {
+        return battlesFought;
+    }
+    public void incrementBattles()
+    {
+        battlesFought += 1;
     }
 
     private void updateCount()

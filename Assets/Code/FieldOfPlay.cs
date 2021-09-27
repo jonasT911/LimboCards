@@ -8,10 +8,10 @@ using UnityEngine.UI;
 public class FieldOfPlay : MonoBehaviour
 {
     //Test comment
-    private int playerHealth = 10;
-    private int enemyHealth = 10;
-    private int money = 7;
-    private int maxMoney = 7;
+    private int playerHealth = 20;
+    private int enemyHealth = 20;
+    private int money = 8;
+    private int maxMoney = 8;
 
     public int xSpaceSize = 1;
     public int ySpaceSize = 1;
@@ -30,6 +30,9 @@ public class FieldOfPlay : MonoBehaviour
 
     bool enemyTurn = false;
     bool playerCanAct = true;
+    public bool gameEnded = false;
+    public GameObject attackSword;
+    public GameObject spareDialogue;
     // Start is called before the first frame update
     void Start()
     {
@@ -45,6 +48,15 @@ public class FieldOfPlay : MonoBehaviour
 
     }
 
+    public int getEnemyHealth()
+    {
+        return enemyHealth;
+    }
+
+    public int getPlayerHealth()
+    {
+        return playerHealth;
+    }
     private void beginGame()
     {
         updateText();
@@ -65,6 +77,10 @@ public class FieldOfPlay : MonoBehaviour
     {
         card.transform.position = new Vector3(spaces[location].transform.position.x + xSpaceSize - 1f, spaces[location].transform.position.y, transform.position.z);
         enemyCards[location] = card;
+        if (card.GetComponent<Card>().ability != null)
+        {
+            Instantiate(card.GetComponent<Card>().ability, new Vector3(location, 2, 0), Quaternion.identity);
+        }
         updateText();
         
     }
@@ -80,7 +96,13 @@ public class FieldOfPlay : MonoBehaviour
         }
         if (enemyHealth <= 0)
         {
-            StartCoroutine(enemyDeath());
+            if (!gameEnded)
+            {
+                gameEnded = true;
+                playerDeck.incrementBattles();
+                StartCoroutine(enemyDeath());
+            
+            }
         }
       
 
@@ -94,19 +116,22 @@ public class FieldOfPlay : MonoBehaviour
     IEnumerator enemyDeath()
     {
         yield return new WaitForSeconds(.5f);
-        SceneManager.LoadScene("Overworld");
+        Instantiate(spareDialogue, new Vector3(0, 0,0), Quaternion.identity);
     }
 
     public void endTurn()
     {
-        print("end turn");
-        doCombat(ref playerCards, ref enemyCards, ref enemyHealth, ref playerHealth);
-        money = maxMoney;
+        if (playerCanAct && !gameEnded)
+        {
+            print("end turn");
+            doCombat(ref playerCards, ref enemyCards, ref enemyHealth, ref playerHealth);
+            money = maxMoney;
 
-        updateText();
+            updateText();
 
-        playerCanAct = false;
-        Invoke("startEnemyTurn", 1f);
+            playerCanAct = false;
+            Invoke("startEnemyTurn", 1.5f);
+        }
     }
 
     private void startEnemyTurn()
@@ -140,27 +165,21 @@ public class FieldOfPlay : MonoBehaviour
             {
                 if (!attackers[i].GetComponent<Card>().getTired())
                 {
+                    float xloc = .6f;
+                    GameObject sword =Instantiate(attackSword, new Vector3(attackers[i].transform.position.x + xloc, attackers[i].transform.position.y), Quaternion.identity);
+                    if (attackers != playerCards)
+                    {
+                        sword.transform.Translate(-1.2f,0,0);
+                        sword.transform.localScale=new Vector3(-sword.transform.localScale.x, sword.transform.localScale.y, sword.transform.localScale.z);
+                    }
+                   
                     if (defenders[i] != null)
                     {
-                        print("Enemy in the way");
+                      
                         int healthTmp = defenders[i].GetComponent<Card>().getHealth();
                         healthTmp -= attackers[i].GetComponent<Card>().attack;
                         defenders[i].GetComponent<Card>().setHealth(healthTmp);
-                        if (healthTmp <= 0)
-                        {
-                            if (defenders == playerCards)
-                            {
-                                defenders[i].transform.position = new Vector3(100, 100, 0);
-                                defenders[i].GetComponent<Card>().destroyOnPull = true;
-
-                                playerDeck.addToGraveyard(defenders[i]);
-                            }
-                            else
-                            {
-                                Destroy(defenders[i]);
-                            }
-                            defenders[i] = null;
-                        }
+                       
                     }
                     else
                     {
@@ -173,7 +192,42 @@ public class FieldOfPlay : MonoBehaviour
                 }
             }
         }
+        checkBoard();
     }
+
+    public void checkBoard()
+    {
+        Invoke("clearTheDead", 1f);
+    }
+
+    private void clearTheDead()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            if (playerCards[i] != null)
+            {
+                if (playerCards[i].GetComponent<Card>().getHealth() <= 0)
+                {
+
+                    playerCards[i].transform.position = new Vector3(100, 100, 0);
+                    playerCards[i].GetComponent<Card>().destroyOnPull = true;
+
+                    playerDeck.addToGraveyard(playerCards[i]);
+
+                    playerCards[i] = null;
+                }
+            }
+            if (enemyCards[i] != null)
+            {
+                if (enemyCards[i].GetComponent<Card>().getHealth() <= 0)
+                {
+                    Destroy(enemyCards[i]);
+                    enemyCards[i] = null;
+                }
+            }
+        }
+    }
+
 
     public bool playedOnBoard(GameObject cardHeld)
     {
@@ -235,6 +289,10 @@ public class FieldOfPlay : MonoBehaviour
             playerCards[location] = cardHeld;
             updateText();
             cardHeld.GetComponent<Card>().setTired(true);
+            if (cardHeld.GetComponent<Card>().ability != null)
+            {
+                Instantiate(cardHeld.GetComponent<Card>().ability, new Vector3(location, 1, 0), Quaternion.identity);
+            }
             return true;
         }
         else

@@ -96,4 +96,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67d3fdc5ff580d94c9615aa3a0e08584, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  card: {fileID: 4655321706273098274, guid: 5134b7ad9479fec4384b8cb04991e391, type: 3}
+  myCards:
+  - {fileID: 4655321706273098274, guid: cb3556138cb3f124a969f34b0ad99ccb, type: 3}
+  - {fileID: 4655321706273098274, guid: 5134b7ad9479fec4384b8cb04991e391, type: 3}
+  - {fileID: 3046317218532302516, guid: 94a96cc45e4c407409e74994a915aa78, type: 3}
+  - {fileID: 4655321706273098274, guid: 783409fac58d99748a8120c58198aa5d, type: 3}
+  - {fileID: 4655321706273098274, guid: 4295dcfd422a18b4b977aa7a4dadddf4, type: 3}
